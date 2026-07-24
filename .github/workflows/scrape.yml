@@ -1,0 +1,33 @@
+name: Run CIGA Scraper
+
+on:
+  schedule:
+    - cron: "0 9 * * *"  
+    - cron: "0 21 * * *" 
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements.txt
+
+      - run: scrapy crawl ciga
+        working-directory: ./ciga
+        env:
+          EMAIL: ${{ secrets.EMAIL }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+
+      - name: Commit updated DB
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add ciga/ciga.db
+          git commit -m "Update DB" || echo "No changes to commit"
+          git push
