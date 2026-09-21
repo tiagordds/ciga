@@ -8,7 +8,7 @@ def send_alert_email(new_text):
     sender_password = os.environ.get("EMAIL_PASSWORD")
     receiver_email = sender_email
 
-    subject = "CIGA - SAIU UMA ATUALIZAÇÃO NO SITE"
+    subject = "CIGA - SAIU UMA ATUALIZAÇÃO NO SITE DA UMA OLHADA LÁ"
     body = f"\n\n{new_text}\n\n https://consorciociga.gov.br/concursos/"
 
     msg = MIMEText(body, "plain", "utf-8")
