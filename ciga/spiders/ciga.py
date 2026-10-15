@@ -6,12 +6,19 @@ from ciga.db import is_same_as_saved, save_to_db
 
 class CigaSpider(scrapy.Spider):
     name = "ciga"
-    allowed_domains = ["consorciociga.gov.br"]
-    start_urls = ["https://consorciociga.gov.br/concursos/"]
+    allowed_domains = ["portal.institutolegalle.org.br"]
+    start_urls = ["https://portal.institutolegalle.org.br/edital/ver/68"]
 
     def parse(self, response):
-        whole_table = response.css("div.su-table.su-table-responsive")
-        item = whole_table.css("tbody tr:first-child td:nth-child(2)::text").get()
+        posts = response.css("#arquivos .list-group-item")
+        if not posts:
+            self.logger.warning("No posts found in ARQUIVOS DISPONÍVEIS")
+            return
+
+        item = posts[0].css("p").xpath("normalize-space(.)").get()
+        if not item:
+            self.logger.warning("The first available post has no title")
+            return
 
         same = is_same_as_saved(item)
         print("__ SAME AS SAVED:", same)
